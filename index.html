@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>✈️ SkySpotter · 民航飞机爱好者完整版</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --card-bg: #ffffff;
+      --text: #1a202c;
+      --text-secondary: #4a5568;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-light: #3b82f6;
+      --accent-dark: #1d4ed8;
+      --gold: #f59e0b;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+      --shadow-lg: 0 20px 40px -8px rgba(0,0,0,0.12);
+      --shadow-xl: 0 28px 56px -12px rgba(0,0,0,0.18);
+      --sky-start: #e8f0fe;
+      --sky-mid: #d4e4fc;
+      --sky-end: #c3d9fa;
+      --radius: 18px;
+      --radius-sm: 10px;
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+      --table-stripe: #f8fafc;
+      --tag-bg: #e0e7ff;
+      --tag-text: #3730a3;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --shadow: 0 4px 12px rgba(0,0,0,0.3);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+      --shadow-lg: 0 20px 40px rgba(0,0,0,0.45);
+      --shadow-xl: 0 28px 56px rgba(0,0,0,0.5);
+      --sky-start: #1a2744;
+      --sky-mid: #162040;
+      --sky-end: #0f1a30;
+      --table-stripe: #1e293b;
+      --tag-bg: #312e81;
+      --tag-text: #c7d2fe;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 天空背景 */
+    .sky-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      background: linear-gradient(180deg, var(--sky-start) 0%, var(--sky-mid) 30%, var(--sky-end) 60%, var(--sky-start) 100%);
+      opacity: 0.5;
+      transition: background 0.4s;
+    }
+
+    .clouds-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .cloud {
+      position: absolute;
+      background: rgba(255,255,255,0.55);
+      border-radius: 50%;
+      filter: blur(45px);
+      animation: floatCloud linear infinite;
+    }
+    [data-theme="dark"] .cloud {
+      background: rgba(255,255,255,0.06);
+      filter: blur(55px);
+    }
+    .cloud:nth-child(1){width:300px;height:100px;top:8%;left:-10%;animation-duration:45s;}
+    .cloud:nth-child(2){width:250px;height:80px;top:20%;left:-20%;animation-duration:55s;animation-delay:-15s;}
+    .cloud:nth-child(3){width:350px;height:120px;top:45%;left:-15%;animation-duration:50s;animation-delay:-30s;}
+    .cloud:nth-child(4){width:200px;height:70px;top:60%;left:-25%;animation-duration:40s;animation-delay:-8s;}
+    .cloud:nth-child(5){width:280px;height:90px;top:75%;left:-18%;animation-duration:60s;animation-delay:-22s;}
+    .cloud:nth-child(6){width:320px;height:110px;top:32%;left:-30%;animation-duration:48s;animation-delay:-38s;}
+
+    @keyframes floatCloud {
+      0%{transform:translateX(0) translateY(0);}
+      25%{transform:translateX(28vw) translateY(-15px);}
+      50%{transform:translateX(55vw) translateY(10px);}
+      75%{transform:translateX(82vw) translateY(-8px);}
+      100%{transform:translateX(110vw) translateY(0);}
+    }
+
+    /* 主容器 */
+    .main-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    /* 导航栏 */
+    .navbar {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 12px 28px;
+      margin: 16px auto 0;
+      max-width: 1400px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.4s;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .nav-logo .logo-icon {
+      font-size: 1.8rem;
+      animation: logoBounce 2s ease-in-out infinite;
+    }
+    @keyframes logoBounce {
+      0%,100%{transform:translateY(0);}
+      30%{transform:translateY(-8px);}
+      50%{transform:translateY(0);}
+      70%{transform:translateY(-4px);}
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 9px 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all var(--transition);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+    .nav-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+    }
+    .theme-toggle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover {
+      transform: rotate(25deg) scale(1.08);
+      border-color: var(--accent);
+    }
+
+    /* 英雄区 */
+    .hero {
+      text-align: center;
+      padding: 50px 20px 30px;
+      position: relative;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent-light), #7c3aed, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* 统计面板 */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin: 20px 0 30px;
+    }
+    .stat-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      text-align: center;
+      min-width: 120px;
+      flex: 1 1 140px;
+      max-width: 200px;
+      box-shadow: var(--shadow);
+      transition: all var(--transition);
+    }
+    .stat-item:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -1px;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* 标签页 */
+    .tabs-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 8px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .tab {
+      padding: 10px 20px;
+      border-radius: 25px;
+      background: transparent;
+      border: 1.5px solid transparent;
+      color: var(--text-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+    }
+    .tab:hover:not(.active) {
+      color: var(--accent);
+      border-color: var(--border);
+      background: rgba(37,99,235,0.05);
+    }
+
+    /* 搜索框 */
+    .search-box {
+      padding: 10px 18px;
+      border-radius: 25px;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      width: 100%;
+      max-width: 320px;
+      outline: none;
+      transition: all var(--transition);
+      margin: 0 auto 20px;
+      display: block;
+    }
+    .search-box:focus {
+      border-color: var(--accent-light);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+    }
+    .search-box::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    /* 网格 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
+    }
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    /* 飞机卡片 */
+    .aircraft-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: all var(--transition);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+    .aircraft-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--accent-light);
+    }
+    .card-image-area {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-gradient-bg {
+      position: absolute;
+      inset: 0;
+      transition: transform 0.5s;
+    }
+    .aircraft-card:hover .card-gradient-bg {
+      transform: scale(1.05);
+    }
+    .card-svg-plane {
+      position: relative;
+      z-index: 1;
+      transition: transform 0.5s;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.25));
+    }
+    .aircraft-card:hover .card-svg-plane {
+      transform: translateY(-12px) scale(1.08);
+    }
+    .card-spotted-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
+      background: #10b981;
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: none;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+    }
+    .card-spotted-badge.show {
+      display: block;
+      animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    @keyframes popIn {
+      0%{transform:scale(0);opacity:0;}
+      100%{transform:scale(1);opacity:1;}
+    }
+    .card-body {
+      padding: 18px 20px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card-manufacturer {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .card-model {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .card-type-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      width: fit-content;
+    }
+    .card-specs-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .card-footer {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-spot {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid #10b981;
+      background: transparent;
+      color: #10b981;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .btn-spot:hover {
+      background: #10b981;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16,185,129,0.35);
+    }
+    .btn-spot.spotted {
+      background: #10b981;
+      color: #fff;
+    }
+    .btn-detail {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .btn-detail:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+    }
+
+    /* 通用卡片 */
+    .info-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.3rem;
+      box-shadow: var(--shadow);
+      transition: all var(--transition);
+    }
+    .info-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* 时间线 */
+    .timeline-item {
+      border-left: 3px solid var(--accent);
+      padding-left: 1.3rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -7px;
+      top: 4px;
+      width: 11px;
+      height: 11px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* 趣味知识 */
+    .fun-fact {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 1px solid #fcd34d;
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      color: #92400e;
+    }
+    [data-theme="dark"] .fun-fact {
+      background: linear-gradient(135deg, #422006 0%, #5c2d0a 100%);
+      border-color: #92400e;
+      color: #fde68a;
+    }
+
+    /* 表格 */
+    .table-wrapper {
+      overflow-x: auto;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin: 0.5rem 0 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+    th {
+      background: var(--accent);
+      color: #fff;
+      padding: 0.7rem 0.8rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:nth-child(even) td {
+      background: var(--table-stripe);
+    }
+
+    /* 弹窗 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn {
+      from{opacity:0;}
+      to{opacity:1;}
+    }
+    .modal-dialog {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      max-width: 650px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border);
+      animation: slideUp 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    @keyframes slideUp {
+      from{transform:translateY(40px);opacity:0;}
+      to{transform:translateY(0);opacity:1;}
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      z-index: 5;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .modal-close {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      color: var(--text);
+    }
+    .modal-close:hover {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #fff;
+    }
+    .modal-body {
+      padding: 24px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 1rem 0 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .highlight {
+      background: rgba(37,99,235,0.12);
+      padding: 0.05rem 0.35rem;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+    .footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+
+    @media (max-width:768px) {
+      .navbar{border-radius:30px;padding:10px 18px;flex-direction:column;gap:8px;}
+      .grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+      .hero{padding:30px 14px 20px;}
+      .stats-bar{gap:8px;}
+      .stat-item{padding:12px 14px;min-width:90px;}
+      .card-image-area{height:150px;}
+      .tabs-wrapper{gap:4px;padding:6px;}
+      .tab{padding:8px 14px;font-size:0.75rem;}
+    }
+    @media (max-width:400px) {
+      .grid{grid-template-columns:1fr;}
+      .grid-2col{grid-template-columns:1fr;}
+    }
+
+    ::-webkit-scrollbar{height:4px;width:4px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+    [data-theme="dark"] ::-webkit-scrollbar-thumb{background:#475569;}
+  </style>
+</head>
+<body>
+  <!-- 天空背景 -->
+  <div class="sky-bg"></div>
+  <div class="clouds-container">
+    <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+    <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+  </div>
+
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="logo-icon">🛫</span>
+      <span>SkySpotter</span>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="showSpottedList()">✅ 观察清单 <span id="spotted-count-nav">0</span></button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+    </div>
+  </nav>
+
+  <!-- 主容器 -->
+  <div class="main-container">
+    <!-- 英雄区 -->
+    <section class="hero">
+      <h1>民航飞机爱好者 · 完整资料库</h1>
+      <p class="subtitle">从窄体客机到双层巨无霸 — 制造商、排行榜、识别特征、历史演进一应俱全</p>
+    </section>
+
+    <!-- 统计面板 -->
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-number" id="stat-total">14</div><div class="stat-label">收录机型</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-manufacturers">8</div><div class="stat-label">制造商</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-spotted">0</div><div class="stat-label">已观察</div></div>
+      <div class="stat-item"><div class="stat-number">∞</div><div class="stat-label">热爱飞行</div></div>
+    </div>
+
+    <!-- 标签页 -->
+    <div class="tabs-wrapper" id="tabContainer">
+      <button class="tab active" data-tab="aircraft">✈️ 飞机详解</button>
+      <button class="tab" data-tab="compare">📊 参数对比</button>
+      <button class="tab" data-tab="manufacturers">🏭 制造商</button>
+      <button class="tab" data-tab="rankings">🏆 排行榜</button>
+      <button class="tab" data-tab="spotting">🔍 识别特征</button>
+      <button class="tab" data-tab="timeline">⏳ 历史演进</button>
+      <button class="tab" data-tab="funfacts">💡 趣味知识</button>
+      <button class="tab" data-tab="classification">📂 分类体系</button>
+    </div>
+
+    <!-- 搜索框 -->
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索机型、制造商、关键词...">
+
+    <!-- 动态内容区 -->
+    <div id="contentArea"></div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <p>✈️ SkySpotter — 数据基于公开航空资料整理 · 仅供爱好者参考 · 2025年初</p>
+      <p>蓝天之下，每一架飞机都有自己的故事。</p>
+    </footer>
+  </div>
+
+  <!-- 弹窗 -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none;" onclick="closeModalOutside(event)">
+    <div class="modal-dialog"><div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modalBody"></div></div>
+  </div>
+
+  <script>
+    (function() {
+      // ==================== 完整数据集 ====================
+      const aircraftDB = [
+        {id:'b737max8',model:'737 MAX 8',fullModel:'Boeing 737 MAX 8',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'窄体客机',category:'narrow-body',seats:'162-178',range:'6,570 km',length:'39.5m',wingspan:'35.9m',engines:'LEAP-1B (2×28,000磅)',cruise:'Mach 0.79',year:2017,mtow:'82.2吨',fuelPerSeat:'约2.2升/100km',price:'约1.35亿美元',description:'波音737第四代，先进技术翼梢小翼(AT Winglet)，燃油效率较NG提升14%。经历全球停飞后于2020年底复飞。',gradient:'linear-gradient(135deg,#3b82f6 0%,#1d4ed8 50%,#1e3a8a 100%)',svgBodyW:140,svgBodyH:26,svgWing:90},
+        {id:'a320neo',model:'A320neo',fullModel:'Airbus A320neo',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'窄体客机',category:'narrow-body',seats:'160-180',range:'6,300 km',length:'37.6m',wingspan:'35.8m',engines:'PW1100G / LEAP-1A (2×27,000磅)',cruise:'Mach 0.78',year:2016,mtow:'79吨',fuelPerSeat:'约2.1升/100km',price:'约1.25亿美元',description:'空客单通道销量冠军，鲨鳍小翼(Sharklet)，neo代表"新发动机选项"。全球最畅销客机之一。',gradient:'linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#7c3aed 100%)',svgBodyW:132,svgBodyH:25,svgWing:88},
+        {id:'a321neo',model:'A321neo',fullModel:'Airbus A321neo',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'窄体客机',category:'narrow-body',seats:'200-220',range:'7,400 km (XLR:8,700km)',length:'44.5m',wingspan:'35.8m',engines:'PW1100G / LEAP-1A (2×33,000磅)',cruise:'Mach 0.78',year:2018,mtow:'97吨',fuelPerSeat:'约2.0升/100km',price:'约1.45亿美元',description:'A321XLR可飞跨大西洋窄体航线，重塑中远程市场格局。2024年投入运营。',gradient:'linear-gradient(135deg,#a78bfa 0%,#7c3aed 50%,#6d28d9 100%)',svgBodyW:155,svgBodyH:26,svgWing:88},
+        {id:'c919',model:'C919',fullModel:'COMAC C919',manufacturer:'中国商飞',manufacturerName:'中国商飞 COMAC',type:'窄体客机',category:'narrow-body',seats:'158-168',range:'5,555 km',length:'38.9m',wingspan:'35.8m',engines:'LEAP-1C (2×28,000磅)',cruise:'Mach 0.785',year:2023,mtow:'77.3吨',fuelPerSeat:'约2.3升/100km',price:'约9,900万美元',description:'中国首款自主干线客机，2023年由中国东航投入商业运营。对标737/A320。',gradient:'linear-gradient(135deg,#ef4444 0%,#dc2626 50%,#b91c1c 100%)',svgBodyW:136,svgBodyH:25,svgWing:88},
+        {id:'e195e2',model:'E195-E2',fullModel:'Embraer E195-E2',manufacturer:'巴西航空',manufacturerName:'巴西航空 Embraer',type:'支线客机',category:'regional',seats:'120-146',range:'4,800 km',length:'41.5m',wingspan:'35.1m',engines:'PW1900G (2×23,000磅)',cruise:'Mach 0.80',year:2019,mtow:'61.5吨',fuelPerSeat:'约2.4升/100km',price:'约6,500万美元',description:'E2系列最大成员，"利润猎手"，环保高效支线客机。',gradient:'linear-gradient(135deg,#22c55e 0%,#16a34a 50%,#15803d 100%)',svgBodyW:125,svgBodyH:24,svgWing:78},
+        {id:'a350-900',model:'A350-900',fullModel:'Airbus A350-900',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'宽体客机',category:'wide-body',seats:'300-350',range:'15,000 km',length:'66.8m',wingspan:'64.8m',engines:'Trent XWB (84,000-97,000磅)',cruise:'Mach 0.85',year:2015,mtow:'280吨',fuelPerSeat:'约2.5升/100km',price:'约3.2亿美元',description:'碳纤维机身占比53%，"浣熊眼"驾驶舱黑框，超远程舒适客舱压力(6,000英尺)。',gradient:'linear-gradient(135deg,#8b5cf6 0%,#7c3aed 50%,#6d28d9 100%)',svgBodyW:178,svgBodyH:31,svgWing:138},
+        {id:'b787-9',model:'787-9',fullModel:'Boeing 787-9 Dreamliner',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'宽体客机',category:'wide-body',seats:'250-290',range:'14,140 km',length:'62.8m',wingspan:'60.1m',engines:'GEnx / Trent 1000 (71,000-76,000磅)',cruise:'Mach 0.85',year:2014,mtow:'254吨',fuelPerSeat:'约2.4升/100km',price:'约2.9亿美元',description:'梦想客机，复合材料占比50%，超大舷窗(47×28cm)，锯齿发动机后缘降噪。',gradient:'linear-gradient(135deg,#06b6d4 0%,#0891b2 50%,#0e7490 100%)',svgBodyW:175,svgBodyH:30,svgWing:130},
+        {id:'b777-300er',model:'777-300ER',fullModel:'Boeing 777-300ER',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'宽体客机',category:'wide-body',seats:'350-396',range:'13,650 km',length:'73.9m',wingspan:'64.8m',engines:'GE90-115B (115,000磅)',cruise:'Mach 0.84',year:2004,mtow:'351吨',fuelPerSeat:'约2.8升/100km',price:'约3.5亿美元',description:'远程主力，GE90是世界上推力最大的商用发动机。主起落架每侧6轮(3轴)。',gradient:'linear-gradient(135deg,#f97316 0%,#ea580c 50%,#c2410c 100%)',svgBodyW:185,svgBodyH:32,svgWing:135},
+        {id:'a380',model:'A380-800',fullModel:'Airbus A380-800',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'巨型客机',category:'jumbo',seats:'525-853',range:'15,000 km',length:'72.7m',wingspan:'79.8m',engines:'GP7200 / Trent 900 (4发)',cruise:'Mach 0.85',year:2007,mtow:'575吨',fuelPerSeat:'约3.0升/100km',price:'约4.45亿美元',description:'全球最大双层客机，共22个轮胎。2021年停产，共交付251架。',gradient:'linear-gradient(135deg,#f59e0b 0%,#d97706 50%,#b45309 100%)',svgBodyW:195,svgBodyH:40,svgWing:155},
+        {id:'b747-8',model:'747-8',fullModel:'Boeing 747-8',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'巨型客机',category:'jumbo',seats:'410-524',range:'14,320 km',length:'76.3m',wingspan:'68.4m',engines:'GEnx-2B (4发)',cruise:'Mach 0.855',year:2012,mtow:'448吨',fuelPerSeat:'约2.9升/100km',price:'约4.1亿美元',description:'"空中女王"最终版，上层客舱加长。2023年停产，结束747系列55年传奇。',gradient:'linear-gradient(135deg,#14b8a6 0%,#0d9488 50%,#0f766e 100%)',svgBodyW:200,svgBodyH:38,svgWing:140},
+        {id:'crj900',model:'CRJ900',fullModel:'Bombardier CRJ900',manufacturer:'庞巴迪',manufacturerName:'庞巴迪 Bombardier',type:'支线客机',category:'regional',seats:'76-90',range:'2,950 km',length:'36.4m',wingspan:'24.9m',engines:'CF34-8C5 (后置2发)',cruise:'Mach 0.78',year:2001,mtow:'38.3吨',fuelPerSeat:'约3.0升/100km',price:'约4,500万美元',description:'后置发动机T型尾翼支线客机，广泛用于北美和欧洲支线网络。',gradient:'linear-gradient(135deg,#8b5cf6 0%,#6d28d9 50%,#4c1d95 100%)',svgBodyW:110,svgBodyH:22,svgWing:62},
+        {id:'atr72',model:'ATR 72-600',fullModel:'ATR 72-600',manufacturer:'ATR',manufacturerName:'ATR (法意合资)',type:'支线客机(涡桨)',category:'regional',seats:'70-78',range:'1,500 km',length:'27.2m',wingspan:'27.1m',engines:'PW127M (2台涡桨)',cruise:'500 km/h',year:2011,mtow:'23吨',fuelPerSeat:'约1.5升/100km',price:'约2,600万美元',description:'涡桨支线全球市场冠军，短距起降能力强，燃油经济性极佳。',gradient:'linear-gradient(135deg,#fbbf24 0%,#f59e0b 50%,#d97706 100%)',svgBodyW:95,svgBodyH:22,svgWing:68},
+        {id:'b777-9',model:'777-9',fullModel:'Boeing 777-9 (777X)',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'宽体客机',category:'wide-body',seats:'400-425',range:'13,500 km',length:'76.7m',wingspan:'71.8m(折叠64.8m)',engines:'GE9X (105,000磅)',cruise:'Mach 0.84',year:'预计2026',mtow:'351吨',fuelPerSeat:'约2.3升/100km',price:'约4.2亿美元',description:'777X系列，折叠翼尖设计，GE9X风扇直径3.4米(比737机身还粗)。',gradient:'linear-gradient(135deg,#ec4899 0%,#db2777 50%,#be185d 100%)',svgBodyW:190,svgBodyH:33,svgWing:155},
+        {id:'a330neo',model:'A330-900neo',fullModel:'Airbus A330-900neo',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'宽体客机',category:'wide-body',seats:'260-300',range:'13,300 km',length:'63.7m',wingspan:'64.0m',engines:'Trent 7000 (72,000磅)',cruise:'Mach 0.82',year:2018,mtow:'251吨',fuelPerSeat:'约2.6升/100km',price:'约2.6亿美元',description:'A330系列最新型号，全新发动机和翼尖小翼，燃油效率提升14%。',gradient:'linear-gradient(135deg,#0ea5e9 0%,#0284c7 50%,#0369a1 100%)',svgBodyW:172,svgBodyH:30,svgWing:130},
+      ];
+
+      const manufacturersDB = [
+        {name:'波音 Boeing',country:'美国',founded:1916,models:'737/747/767/777/787',note:'全球两大干线制造商之一，737系列累计交付超11,000架'},
+        {name:'空客 Airbus',country:'欧洲(法德英西)',founded:1970,models:'A220/A320/A330/A350/A380',note:'近年交付量领先，A320neo系列史上最畅销'},
+        {name:'中国商飞 COMAC',country:'中国',founded:2008,models:'C909(ARJ21)/C919/C929',note:'中国民用大飞机主力，C919于2023年商业运营'},
+        {name:'巴西航空 Embraer',country:'巴西',founded:1969,models:'E170/E175/E190/E195/E2系列',note:'支线客机全球领导者，100-150座级市场冠军'},
+        {name:'庞巴迪 Bombardier',country:'加拿大',founded:1942,models:'CRJ系列/环球快车公务机',note:'已将C系列出售给空客(A220)，专注公务机'},
+        {name:'ATR',country:'法国/意大利',founded:1981,models:'ATR 42-600 / ATR 72-600',note:'涡桨支线市场全球冠军，短距起降专家'},
+        {name:'湾流 Gulfstream',country:'美国',founded:1958,models:'G500/G600/G650ER/G700',note:'顶级公务机制造商，G700为最新旗舰'},
+        {name:'达索猎鹰 Dassault',country:'法国',founded:1963,models:'Falcon 6X/8X/10X',note:'法国高端公务机，三发布局独特'},
+      ];
+
+      const airlineRankings=[{rank:1,name:'美国航空',country:'美国',fleet:1450,alliance:'寰宇一家'},{rank:2,name:'达美航空',country:'美国',fleet:1350,alliance:'天合联盟'},{rank:3,name:'美联航',country:'美国',fleet:1320,alliance:'星空联盟'},{rank:4,name:'中国南方航空',country:'中国',fleet:900,alliance:'—'},{rank:5,name:'瑞安航空',country:'爱尔兰',fleet:750,alliance:'—(低成本)'},{rank:6,name:'中国东方航空',country:'中国',fleet:780,alliance:'天合联盟'},{rank:7,name:'中国国际航空',country:'中国',fleet:730,alliance:'星空联盟'},{rank:8,name:'西南航空',country:'美国',fleet:700,alliance:'—(低成本)'},{rank:9,name:'土耳其航空',country:'土耳其',fleet:650,alliance:'星空联盟'},{rank:10,name:'汉莎航空',country:'德国',fleet:600,alliance:'星空联盟'}];
+      const deliveryRankings=[{model:'波音737全系列',deliveries:'11,000+',status:'持续生产中(超50年)'},{model:'空客A320全系列',deliveries:'10,500+',status:'持续生产中，追赶中'},{model:'波音777全系列',deliveries:'1,700+',status:'持续生产中'},{model:'巴航E-喷气系列',deliveries:'1,700+',status:'持续生产中'},{model:'空客A330全系列',deliveries:'1,600+',status:'持续生产中'},{model:'波音747全系列',deliveries:'1,574',status:'2023年停产'},{model:'波音767全系列',deliveries:'1,300+',status:'仅剩货机订单'},{model:'空客A350系列',deliveries:'600+',status:'持续生产，增长迅速'}];
+      const skytraxRankings=[{rank:1,name:'卡塔尔航空',country:'卡塔尔',award:'全球最佳航空'},{rank:2,name:'新加坡航空',country:'新加坡',award:'最佳客舱服务'},{rank:3,name:'阿联酋航空',country:'阿联酋',award:'最佳经济舱'},{rank:4,name:'全日空 ANA',country:'日本',award:'最佳机场服务'},{rank:5,name:'国泰航空',country:'中国香港',award:'最佳商务舱(候选)'}];
+      const busiestRoutes=[{rank:1,route:'香港-台北',seats:'约680万/年'},{rank:2,route:'开罗-吉达',seats:'约550万/年'},{rank:3,route:'首尔-东京成田',seats:'约535万/年'},{rank:4,route:'吉隆坡-新加坡',seats:'约490万/年'},{rank:5,route:'首尔-大阪',seats:'约420万/年'}];
+      const busiestAirports=[{rank:1,code:'ATL',name:'亚特兰大',pax:'1.05亿'},{rank:2,code:'DXB',name:'迪拜',pax:'9,200万'},{rank:3,code:'DFW',name:'达拉斯/沃斯堡',pax:'8,700万'},{rank:4,code:'LHR',name:'伦敦希思罗',pax:'8,300万'},{rank:5,code:'HND',name:'东京羽田',pax:'7,900万'}];
+      const spottingFeatures=[{model:'波音737',tip:'机身矮壮，发动机底部"压扁"(椭圆形前缘)；MAX有分叉翼尖小翼；主起落架无舱门。'},{model:'空客A320',tip:'机身圆直；鲨鳍小翼(新款)或翼尖围栏(老款)；驾驶舱侧窗下沿平直。'},{model:'波音747',tip:'上层"驼峰"客舱，4发；-400翼端有小翼，-8上层更长且锯齿发动机后缘。'},{model:'波音777',tip:'主起落架每侧6轮(3轴)；巨大GE90发动机；机身圆形截面。'},{model:'波音787',tip:'锯齿型发动机后缘+整流罩；超大舷窗；机翼大幅弯曲上翘。'},{model:'空客A350',tip:'驾驶舱"浣熊眼"黑框环绕；弯曲前缘机翼；锯齿发动机后缘。'},{model:'空客A380',tip:'全双层客舱+4发；翼展近80米；22个轮胎；无可混淆。'},{model:'CRJ系列',tip:'后置发动机，T型尾翼；机头侧面看像鲨鱼。'},{model:'E-Jet系列',tip:'前置发动机，翼下吊挂；尾锥细长。'},{model:'C919',tip:'与A320相似但驾驶舱侧窗形状略不同；翼尖小翼独特。'},{model:'波音757',tip:'起落架特别高像"踩高跷"；细长机身"飞行铅笔"。'},{model:'波音767',tip:'驾驶舱最后一块侧窗独特倒角("八字胡")；主起落架4轮。'}];
+      const timelineEvents=[{year:'1935',text:'道格拉斯DC-3首飞，现代民航业基石。'},{year:'1952',text:'德哈维兰彗星投入服务，世界首款喷气式客机。'},{year:'1958',text:'波音707投入运营，开启大规模喷气时代。'},{year:'1968',text:'波音737首飞，至今持续生产超55年。'},{year:'1970',text:'波音747"空中女王"投入服务，宽体时代到来。'},{year:'1988',text:'空客A320首飞，首款全数字电传操纵客机。'},{year:'1995',text:'波音777投入服务，首款全计算机设计客机。'},{year:'2007',text:'空客A380商业首航，全球最大双层客机。'},{year:'2011',text:'波音787梦想客机交付，复合材料革命。'},{year:'2023',text:'C919商业运营，波音747系列停产。'},{year:'2029',text:'Boom Overture超音速客机计划投入运营。'}];
+      const funFacts=['最短商业航线：苏格兰韦斯特雷岛→帕帕韦斯特雷岛，仅2.7公里，飞行约53秒。','最长商业航线：新加坡→纽约(SQ21/22)，18,000+公里，约18.5小时。','最多轮胎的客机：空客A380共22个轮胎(前起2轮+主起20轮)。','GE9X发动机风扇直径3.4米，比波音737机身直径仅小一点。','波音787机翼在巡航时上翘弯曲幅度可达3米多。','波音747货机机头可以翻起，用于装卸超大货物。','唯一未出过致死事故的现代喷气客机：波音787、空客A350、空客A380。','波音737已持续生产超55年，是航空史上产量最高的客机。','全球最繁忙机场：亚特兰大(ATL)，年旅客量超1亿。','三大航空联盟：星空联盟(25家)、天合联盟(19家)、寰宇一家(13家)。'];
+      const classificationByRange=[{cat:'短程支线',range:'<1,500km',ex:'ATR 72、Dash 8-Q400'},{cat:'中短程窄体',range:'1,500-4,000km',ex:'737-700、A319'},{cat:'中程窄体',range:'4,000-6,500km',ex:'737 MAX 8、A320neo'},{cat:'长程窄体',range:'6,500-8,500km',ex:'A321XLR'},{cat:'中程宽体',range:'8,000-11,000km',ex:'787-8、A330-200'},{cat:'远程宽体',range:'11,000-14,000km',ex:'787-9、A350-900'},{cat:'超远程',range:'14,000-18,000+km',ex:'A350-900ULR'}];
+      const classificationByEngine=[{config:'双发',ex:'737、A320、787、A350',note:'绝对主流(95%+)',trend:'↑主导'},{config:'三发',ex:'DC-10、MD-11',note:'结构复杂油耗高',trend:'已退出客运'},{config:'四发',ex:'747、A380、A340',note:'油耗极高',trend:'仅存极少数'}];
+      const etopsData=[{level:'ETOPS-120',range:'距备降机场120分钟',ex:'早期737、A320'},{level:'ETOPS-180',range:'距备降机场180分钟',ex:'737NG、A320neo'},{level:'ETOPS-330',range:'距备降机场330分钟',ex:'777-300ER、787、A350'},{level:'ETOPS-370',range:'距备降机场370分钟',ex:'A350-900ULR'}];
+
+      // ==================== SVG生成 ====================
+      function createPlaneSVG(data) {
+        const bw=data.svgBodyW,bh=data.svgBodyH,ws=data.svgWing,totalW=Math.max(bw+40,ws+20),totalH=Math.max(bh+70,100);
+        return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="${totalW/2}" cy="${totalH/2+10}" rx="${bw/2}" ry="${bh/2}" fill="white" stroke="#e2e8f0" stroke-width="1.5" opacity="0.95"/>
+          <ellipse cx="${totalW/2+bw/2-6}" cy="${totalH/2+10}" rx="12" ry="${bh/2-2}" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2" opacity="0.9"/>
+          <polygon points="${totalW/2-ws/2},${totalH/2+10-bh/2} ${totalW/2+ws/2},${totalH/2+10-bh/2} ${totalW/2+ws/2+8},${totalH/2+10-bh/2-4} ${totalW/2-ws/2-8},${totalH/2+10-bh/2-4}" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+          <polygon points="${totalW/2-ws/2+6},${totalH/2+10+bh/2} ${totalW/2+ws/2-6},${totalH/2+10+bh/2} ${totalW/2+ws/2},${totalH/2+10+bh/2+4} ${totalW/2-ws/2},${totalH/2+10+bh/2+4}" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" opacity="0.7"/>
+          <polygon points="${totalW/2-bw/2+10},${totalH/2+10-bh/2} ${totalW/2-bw/2+4},${totalH/2+10-bh/2-25} ${totalW/2-bw/2+20},${totalH/2+10-bh/2-18}" fill="white" stroke="#e2e8f0" stroke-width="1.2"/>
+          <rect x="${totalW/2-bw/3-6}" y="${totalH/2+10+bh/2-3}" width="14" height="10" rx="4" fill="#94a3b8" opacity="0.7"/>
+          <rect x="${totalW/2+bw/3-8}" y="${totalH/2+10+bh/2-3}" width="14" height="10" rx="4" fill="#94a3b8" opacity="0.7"/>
+          ${Array.from({length:Math.floor(bw/16)},(_,i)=>`<circle cx="${totalW/2-bw/4+i*(bw/(Math.floor(bw/16)+1))+bw/(Math.floor(bw/16)+1)*0.6}" cy="${totalH/2+10-bh/4}" r="2.5" fill="#3b82f6" opacity="0.7"/>`).join('')}
+        </svg>`;
+      }
+
+      // ==================== 状态 ====================
+      let currentTab='aircraft';
+      const contentArea=document.getElementById('contentArea');
+      const searchInput=document.getElementById('searchInput');
+      const modalOverlay=document.getElementById('modalOverlay');
+      const modalTitle=document.getElementById('modalTitle');
+      const modalBody=document.getElementById('modalBody');
+      let spottedSet=new Set(JSON.parse(localStorage.getItem('spottedAircraft')||'[]'));
+
+      function highlight(text,query){if(!query||query.length<2)return text;const e=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return text.replace(new RegExp(`(${e})`,'gi'),'<span class="highlight">$1</span>');}
+      function filterItems(items,query,fields){if(!query||query.length<2)return items;const q=query.toLowerCase();return items.filter(i=>fields.some(f=>String(i[f]||'').toLowerCase().includes(q)));}
+
+      // ==================== 渲染函数 ====================
+      function renderAircraft(query){
+        const filtered=filterItems(aircraftDB,query,['model','fullModel','manufacturer','manufacturerName','type','description','engines']);
+        if(!filtered.length)return '<p style="text-align:center;padding:2rem;">🔍 未找到匹配机型</p>';
+        return `<div class="grid">${filtered.map(a=>`
+          <div class="aircraft-card" data-id="${a.id}" onclick="openDetail('${a.id}')">
+            <div class="card-image-area"><div class="card-gradient-bg" style="background:${a.gradient};"></div>
+              <div class="card-svg-plane">${createPlaneSVG(a)}</div>
+              <div class="card-spotted-badge ${spottedSet.has(a.id)?'show':''}">✅ 已观察</div></div>
+            <div class="card-body">
+              <div class="card-manufacturer">${highlight(a.manufacturerName,query)}</div>
+              <div class="card-model">${highlight(a.fullModel,query)}</div>
+              <span class="card-type-badge">${a.type}</span>
+              <div class="card-specs-row"><span>🪑 ${a.seats}座</span><span>🛫 ${a.range}</span><span>📏 ${a.length}</span></div>
+              <div class="card-footer">
+                <button class="btn-spot ${spottedSet.has(a.id)?'spotted':''}" onclick="event.stopPropagation();toggleSpotted('${a.id}')">${spottedSet.has(a.id)?'✅ 已观察':'👁️ 标记观察'}</button>
+                <button class="btn-detail" onclick="event.stopPropagation();openDetail('${a.id}')">📋 详细规格</button>
+              </div></div></div>`).join('')}</div>`;
+      }
+
+      function renderCompare(){return `
+        <div class="section-title">📊 窄体客机参数对比</div><div class="table-wrapper"><table><thead><tr><th>参数</th><th>737 MAX 8</th><th>A320neo</th><th>A321neo</th><th>C919</th><th>E195-E2</th></tr></thead><tbody>
+        <tr><td>座位</td><td>162-178</td><td>160-180</td><td>200-220</td><td>158-168</td><td>120-146</td></tr>
+        <tr><td>航程</td><td>6,570km</td><td>6,300km</td><td>7,400km</td><td>5,555km</td><td>4,800km</td></tr>
+        <tr><td>长度</td><td>39.5m</td><td>37.6m</td><td>44.5m</td><td>38.9m</td><td>41.5m</td></tr>
+        <tr><td>最大起飞重量</td><td>82.2吨</td><td>79吨</td><td>97吨</td><td>77.3吨</td><td>61.5吨</td></tr>
+        <tr><td>目录价格</td><td>1.35亿$</td><td>1.25亿$</td><td>1.45亿$</td><td>0.99亿$</td><td>0.65亿$</td></tr></tbody></table></div>
+        <div class="section-title" style="margin-top:1.5rem;">📊 宽体客机参数对比</div><div class="table-wrapper"><table><thead><tr><th>参数</th><th>787-9</th><th>A350-900</th><th>777-300ER</th><th>777-9</th><th>A330neo</th></tr></thead><tbody>
+        <tr><td>座位</td><td>290</td><td>315</td><td>368</td><td>400-425</td><td>287</td></tr>
+        <tr><td>航程</td><td>14,140km</td><td>15,000km</td><td>13,650km</td><td>13,500km</td><td>13,300km</td></tr>
+        <tr><td>长度</td><td>62.8m</td><td>66.8m</td><td>73.9m</td><td>76.7m</td><td>63.7m</td></tr>
+        <tr><td>复合材料</td><td>50%</td><td>53%</td><td>12%</td><td>约30%</td><td>约15%</td></tr>
+        <tr><td>目录价格</td><td>2.9亿$</td><td>3.2亿$</td><td>3.5亿$</td><td>4.2亿$</td><td>2.6亿$</td></tr></tbody></table></div>`;}
+
+      function renderManufacturers(query){const f=filterItems(manufacturersDB,query,['name','country','models','note']);return `<div class="table-wrapper"><table><thead><tr><th>制造商</th><th>国家</th><th>成立</th><th>代表机型</th><th>备注</th></tr></thead><tbody>${f.map(m=>`<tr><td>${highlight(m.name,query)}</td><td>${m.country}</td><td>${m.founded}</td><td>${highlight(m.models,query)}</td><td>${highlight(m.note,query)}</td></tr>`).join('')}</tbody></table></div>`;}
+
+      function renderRankings(){return `
+        <div class="section-title">🏅 全球前10航空公司 (机队规模)</div><div class="table-wrapper"><table><thead><tr><th>排名</th><th>航空公司</th><th>国家</th><th>机队</th><th>联盟</th></tr></thead><tbody>${airlineRankings.map(a=>`<tr><td>${a.rank}</td><td>${a.name}</td><td>${a.country}</td><td>约${a.fleet}架</td><td>${a.alliance}</td></tr>`).join('')}</tbody></table></div>
+        <div class="section-title">⭐ Skytrax 2024最佳航空</div><div class="table-wrapper"><table><thead><tr><th>排名</th><th>航空公司</th><th>国家</th><th>奖项</th></tr></thead><tbody>${skytraxRankings.map(s=>`<tr><td>${s.rank}</td><td>${s.name}</td><td>${s.country}</td><td>${s.award}</td></tr>`).join('')}</tbody></table></div>
+        <div class="section-title">📦 客机累计交付量排名</div><div class="table-wrapper"><table><thead><tr><th>机型系列</th><th>累计交付</th><th>状态</th></tr></thead><tbody>${deliveryRankings.map(d=>`<tr><td>${d.model}</td><td>${d.deliveries}</td><td>${d.status}</td></tr>`).join('')}</tbody></table></div>
+        <div class="section-title">🌍 最繁忙航线</div><div class="table-wrapper"><table><thead><tr><th>排名</th><th>航线</th><th>年座位数</th></tr></thead><tbody>${busiestRoutes.map(r=>`<tr><td>${r.rank}</td><td>${r.route}</td><td>${r.seats}</td></tr>`).join('')}</tbody></table></div>
+        <div class="section-title">🏢 最繁忙机场</div><div class="table-wrapper"><table><thead><tr><th>排名</th><th>代码</th><th>机场</th><th>年旅客量</th></tr></thead><tbody>${busiestAirports.map(a=>`<tr><td>${a.rank}</td><td>${a.code}</td><td>${a.name}</td><td>${a.pax}</td></tr>`).join('')}</tbody></table></div>`;}
+
+      function renderSpotting(query){const f=filterItems(spottingFeatures,query,['model','tip']);return `<div class="grid">${f.map(s=>`<div class="info-card"><div class="card-model">🔎 ${highlight(s.model,query)}</div><p style="color:var(--text-secondary);margin-top:0.4rem;">${highlight(s.tip,query)}</p></div>`).join('')}</div>`;}
+
+      function renderTimeline(){return timelineEvents.map(e=>`<div class="timeline-item"><strong style="color:var(--accent);font-size:1.1rem;">${e.year}</strong><p>${e.text}</p></div>`).join('');}
+
+      function renderFunFacts(){return `<div class="grid-2col">${funFacts.map(f=>`<div class="fun-fact">💡 ${f}</div>`).join('')}</div>`;}
+
+      function renderClassification(){return `
+        <div class="section-title">📏 按航程分类</div><div class="table-wrapper"><table><thead><tr><th>类别</th><th>航程范围</th><th>代表机型</th></tr></thead><tbody>${classificationByRange.map(r=>`<tr><td>${r.cat}</td><td>${r.range}</td><td>${r.ex}</td></tr>`).join('')}</tbody></table></div>
+        <div class="section-title">⚙️ 按发动机数量</div><div class="table-wrapper"><table><thead><tr><th>配置</th><th>代表机型</th><th>特点</th><th>趋势</th></tr></thead><tbody>${classificationByEngine.map(e=>`<tr><td>${e.config}</td><td>${e.ex}</td><td>${e.note}</td><td>${e.trend}</td></tr>`).join('')}</tbody></table></div>
+        <div class="section-title">🌊 ETOPS等级</div><div class="table-wrapper"><table><thead><tr><th>等级</th><th>许可范围</th><th>代表机型</th></tr></thead><tbody>${etopsData.map(e=>`<tr><td>${e.level}</td><td>${e.range}</td><td>${e.ex}</td></tr>`).join('')}</tbody></table></div>`;}
+
+      function renderContent(){const q=searchInput.value.trim();let h='';switch(currentTab){case'aircraft':h=renderAircraft(q);break;case'compare':h=renderCompare();break;case'manufacturers':h=renderManufacturers(q);break;case'rankings':h=renderRankings();break;case'spotting':h=renderSpotting(q);break;case'timeline':h=renderTimeline();break;case'funfacts':h=renderFunFacts();break;case'classification':h=renderClassification();break;default:h=renderAircraft(q);}contentArea.innerHTML=h;updateStats();}
+
+      function updateStats(){document.getElementById('stat-total').textContent=aircraftDB.length;const um=new Set(aircraftDB.map(a=>a.manufacturer));document.getElementById('stat-manufacturers').textContent=um.size;document.getElementById('stat-spotted').textContent=spottedSet.size;document.getElementById('spotted-count-nav').textContent=spottedSet.size>0?`(${spottedSet.size})`:'(0)';}
+
+      // 弹窗
+      window.openDetail=function(id){const d=aircraftDB.find(a=>a.id===id);if(!d)return;modalTitle.textContent=d.fullModel;modalBody.innerHTML=`
+        <div style="background:${d.gradient};border-radius:14px;padding:30px;text-align:center;margin-bottom:18px;"><div style="filter:drop-shadow(0 8px 20px rgba(0,0,0,0.25));">${createPlaneSVG(d)}</div></div>
+        <table style="width:100%;border-collapse:collapse;margin:16px 0;"><tbody>
+        <tr><td style="font-weight:600;padding:8px;">🏭 制造商</td><td>${d.manufacturerName}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">📂 类型</td><td>${d.type}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">📅 首飞</td><td>${d.year}年</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">🪑 座位</td><td>${d.seats}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">🛫 航程</td><td>${d.range}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">📏 长度/翼展</td><td>${d.length} / ${d.wingspan}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">💨 巡航速度</td><td>${d.cruise}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">⚙️ 发动机</td><td>${d.engines}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">⚖️ 最大起飞重量</td><td>${d.mtow}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">💰 目录价</td><td>${d.price}</td></tr></tbody></table>
+        <p style="color:var(--text-secondary);margin-top:12px;">📝 ${d.description}</p>
+        <div style="margin-top:16px;text-align:center;"><button class="btn-spot ${spottedSet.has(d.id)?'spotted':''}" onclick="toggleSpotted('${d.id}');closeModal();">${spottedSet.has(d.id)?'✅ 已观察':'👁️ 标记为已观察'}</button></div>`;modalOverlay.style.display='flex';document.body.style.overflow='hidden';};
+      window.closeModal=function(){modalOverlay.style.display='none';document.body.style.overflow='';renderContent();};
+      window.closeModalOutside=function(e){if(e.target===modalOverlay)closeModal();};
+      window.toggleSpotted=function(id){spottedSet.has(id)?spottedSet.delete(id):spottedSet.add(id);localStorage.setItem('spottedAircraft',JSON.stringify([...spottedSet]));renderContent();};
+      window.showSpottedList=function(){if(spottedSet.size===0){alert('观察清单为空，请先标记机型！✈️');return;}const sd=aircraftDB.filter(a=>spottedSet.has(a.id));contentArea.innerHTML=`<div class="grid">${sd.map(a=>`<div class="aircraft-card" onclick="openDetail('${a.id}')"><div class="card-image-area"><div class="card-gradient-bg" style="background:${a.gradient};"></div><div class="card-svg-plane">${createPlaneSVG(a)}</div><div class="card-spotted-badge show">✅ 已观察</div></div><div class="card-body"><div class="card-manufacturer">${a.manufacturerName}</div><div class="card-model">${a.fullModel}</div><span class="card-type-badge">${a.type}</span><div class="card-specs-row"><span>🪑 ${a.seats}座</span><span>🛫 ${a.range}</span></div></div></div>`).join('')}</div>`;updateStats();};
+
+      // 事件
+      document.getElementById('tabContainer').addEventListener('click',e=>{if(e.target.classList.contains('tab')){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');currentTab=e.target.dataset.tab;searchInput.value='';renderContent();contentArea.scrollIntoView({behavior:'smooth',block:'start'});}});
+      searchInput.addEventListener('input',renderContent);
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalOverlay.style.display==='flex')closeModal();});
+      window.toggleTheme=function(){const h=document.documentElement;const c=h.getAttribute('data-theme');const n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);document.querySelector('.theme-toggle').textContent=n==='dark'?'☀️':'🌓';};
+      (function(){const s=localStorage.getItem('theme');const p=window.matchMedia('(prefers-color-scheme:dark)').matches;const t=s||(p?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.querySelector('.theme-toggle').textContent=t==='dark'?'☀️':'🌓';})();
+
+      renderContent();
+    })();
+  </script>
+</body>
+</html>

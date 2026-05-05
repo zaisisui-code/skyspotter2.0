@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <title>✈️ SkySpotter · 民航飞机爱好者完整版</title>
+  <title>✈️ SkySpotter · 民航飞机爱好者 · 航空公司特辑</title>
   <style>
     :root {
       --bg: #f0f4f8;
@@ -685,32 +685,31 @@
 
   <div class="main-container">
     <section class="hero">
-      <h1>民航飞机爱好者 · 完整资料库</h1>
-      <p class="subtitle">从窄体客机到双层巨无霸 — 制造商、排行榜、识别特征、历史演进一应俱全</p>
+      <h1>民航飞机爱好者 · 航空公司特辑</h1>
+      <p class="subtitle">全日空 · 土耳其航空 · 阿联酋航空 · 新加坡航空 · 汉莎航空 · 顺丰航空 · 专机涂装</p>
     </section>
 
     <div class="stats-bar">
-      <div class="stat-item"><div class="stat-number" id="stat-total">15</div><div class="stat-label">收录机型</div></div>
-      <div class="stat-item"><div class="stat-number" id="stat-manufacturers">8</div><div class="stat-label">制造商</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-total">8</div><div class="stat-label">精选机型</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-manufacturers">2</div><div class="stat-label">制造商</div></div>
       <div class="stat-item"><div class="stat-number" id="stat-spotted">0</div><div class="stat-label">已观察</div></div>
       <div class="stat-item"><div class="stat-number">∞</div><div class="stat-label">热爱飞行</div></div>
     </div>
 
     <div class="tabs-wrapper" id="tabContainer">
       <button class="tab active" data-tab="aircraft">✈️ 飞机详解</button>
-      <button class="tab" data-tab="compare">📊 参数对比</button>
       <button class="tab" data-tab="manufacturers">🏭 制造商</button>
       <button class="tab" data-tab="rankings">🏆 排行榜</button>
       <button class="tab" data-tab="spotting">🔍 识别特征</button>
       <button class="tab" data-tab="timeline">⏳ 历史演进</button>
     </div>
 
-    <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索机型、制造商、关键词...">
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索航空公司、机型...">
 
     <div id="contentArea"></div>
 
     <footer class="footer">
-      <p>✈️ SkySpotter — 数据基于公开航空资料整理 · 仅供爱好者参考 · 2025年初</p>
+      <p>✈️ SkySpotter — 航空公司特辑 · 图片版权归原作者所有 · 仅供爱好者参考</p>
       <p>蓝天之下，每一架飞机都有自己的故事。</p>
     </footer>
   </div>
@@ -722,27 +721,180 @@
 
   <script>
     (function() {
-      // ==================== 完整数据集（已添加A340并替换图片） ====================
+      // ==================== 8架精选飞机（全部使用真实图片） ====================
       const aircraftDB = [
-        {id:'b737max8',model:'737 MAX 8',fullModel:'Boeing 737 MAX 8',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'窄体客机',category:'narrow-body',seats:'162-178',range:'6,570 km',length:'39.5m',wingspan:'35.9m',engines:'LEAP-1B (2×28,000磅)',cruise:'Mach 0.79',year:2017,mtow:'82.2吨',fuelPerSeat:'约2.2升/100km',price:'约1.35亿美元',description:'波音737第四代，先进技术翼梢小翼(AT Winglet)，燃油效率较NG提升14%。',gradient:'linear-gradient(135deg,#3b82f6 0%,#1d4ed8 50%,#1e3a8a 100%)',svgBodyW:140,svgBodyH:26,svgWing:90,imageUrl:''},
-        {id:'a320neo',model:'A320neo',fullModel:'Airbus A320neo',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'窄体客机',category:'narrow-body',seats:'160-180',range:'6,300 km',length:'37.6m',wingspan:'35.8m',engines:'PW1100G / LEAP-1A (2×27,000磅)',cruise:'Mach 0.78',year:2016,mtow:'79吨',fuelPerSeat:'约2.1升/100km',price:'约1.25亿美元',description:'空客单通道销量冠军，鲨鳍小翼(Sharklet)，neo代表"新发动机选项"。',gradient:'linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#7c3aed 100%)',svgBodyW:132,svgBodyH:25,svgWing:88,imageUrl:''},
-        {id:'a321neo',model:'A321neo',fullModel:'Airbus A321neo',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'窄体客机',category:'narrow-body',seats:'200-220',range:'7,400 km (XLR:8,700km)',length:'44.5m',wingspan:'35.8m',engines:'PW1100G / LEAP-1A (2×33,000磅)',cruise:'Mach 0.78',year:2018,mtow:'97吨',fuelPerSeat:'约2.0升/100km',price:'约1.45亿美元',description:'A321XLR可飞跨大西洋窄体航线。',gradient:'linear-gradient(135deg,#a78bfa 0%,#7c3aed 50%,#6d28d9 100%)',svgBodyW:155,svgBodyH:26,svgWing:88,imageUrl:''},
-        {id:'c919',model:'C919',fullModel:'COMAC C919',manufacturer:'中国商飞',manufacturerName:'中国商飞 COMAC',type:'窄体客机',category:'narrow-body',seats:'158-168',range:'5,555 km',length:'38.9m',wingspan:'35.8m',engines:'LEAP-1C (2×28,000磅)',cruise:'Mach 0.785',year:2023,mtow:'77.3吨',fuelPerSeat:'约2.3升/100km',price:'约9,900万美元',description:'中国首款自主干线客机，2023年商业运营。',gradient:'linear-gradient(135deg,#ef4444 0%,#dc2626 50%,#b91c1c 100%)',svgBodyW:136,svgBodyH:25,svgWing:88,imageUrl:''},
-        {id:'e195e2',model:'E195-E2',fullModel:'Embraer E195-E2',manufacturer:'巴西航空',manufacturerName:'巴西航空 Embraer',type:'支线客机',category:'regional',seats:'120-146',range:'4,800 km',length:'41.5m',wingspan:'35.1m',engines:'PW1900G (2×23,000磅)',cruise:'Mach 0.80',year:2019,mtow:'61.5吨',fuelPerSeat:'约2.4升/100km',price:'约6,500万美元',description:'E2系列最大成员，"利润猎手"。',gradient:'linear-gradient(135deg,#22c55e 0%,#16a34a 50%,#15803d 100%)',svgBodyW:125,svgBodyH:24,svgWing:78,imageUrl:''},
-        {id:'a350-900',model:'A350-900',fullModel:'Airbus A350-900',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'宽体客机',category:'wide-body',seats:'300-350',range:'15,000 km',length:'66.8m',wingspan:'64.8m',engines:'Trent XWB',cruise:'Mach 0.85',year:2015,mtow:'280吨',fuelPerSeat:'约2.5升/100km',price:'约3.2亿美元',description:'碳纤维机身，"浣熊眼"驾驶舱，超远程舒适客舱。',gradient:'linear-gradient(135deg,#8b5cf6 0%,#7c3aed 50%,#6d28d9 100%)',svgBodyW:178,svgBodyH:31,svgWing:138,imageUrl:'https://i.postimg.cc/KjwKyYXv/A350-900.jpg'},
-        {id:'a340',model:'A340-600',fullModel:'Airbus A340-600',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'宽体客机',category:'wide-body',seats:'320-370',range:'14,360 km',length:'75.3m',wingspan:'63.5m',engines:'Trent 500 (4发)',cruise:'Mach 0.83',year:2001,mtow:'380吨',fuelPerSeat:'约3.2升/100km',price:'约2.8亿美元',description:'空客四发远程宽体客机，A340-600曾是世界上最长的单层客机。独特的四台发动机和修长机身极具辨识度。',gradient:'linear-gradient(135deg,#64748b 0%,#475569 50%,#334155 100%)',svgBodyW:190,svgBodyH:32,svgWing:130,imageUrl:'https://i.postimg.cc/PJrbqJFS/A340.jpg'},
-        {id:'b787-9',model:'787-9',fullModel:'Boeing 787-9 Dreamliner',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'宽体客机',category:'wide-body',seats:'250-290',range:'14,140 km',length:'62.8m',wingspan:'60.1m',engines:'GEnx / Trent 1000',cruise:'Mach 0.85',year:2014,mtow:'254吨',fuelPerSeat:'约2.4升/100km',price:'约2.9亿美元',description:'梦想客机，复合材料占比50%，超大舷窗。',gradient:'linear-gradient(135deg,#06b6d4 0%,#0891b2 50%,#0e7490 100%)',svgBodyW:175,svgBodyH:30,svgWing:130,imageUrl:''},
-        {id:'b777-300er',model:'777-300ER',fullModel:'Boeing 777-300ER',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'宽体客机',category:'wide-body',seats:'350-396',range:'13,650 km',length:'73.9m',wingspan:'64.8m',engines:'GE90-115B',cruise:'Mach 0.84',year:2004,mtow:'351吨',fuelPerSeat:'约2.8升/100km',price:'约3.5亿美元',description:'远程主力，GE90是世界最大推力商用发动机。',gradient:'linear-gradient(135deg,#f97316 0%,#ea580c 50%,#c2410c 100%)',svgBodyW:185,svgBodyH:32,svgWing:135,imageUrl:''},
-        {id:'a380',model:'A380-800',fullModel:'Airbus A380-800',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'巨型客机',category:'jumbo',seats:'525-853',range:'15,000 km',length:'72.7m',wingspan:'79.8m',engines:'GP7200 / Trent 900 (4发)',cruise:'Mach 0.85',year:2007,mtow:'575吨',fuelPerSeat:'约3.0升/100km',price:'约4.45亿美元',description:'全球最大双层客机，共22个轮胎。2021年停产。',gradient:'linear-gradient(135deg,#f59e0b 0%,#d97706 50%,#b45309 100%)',svgBodyW:195,svgBodyH:40,svgWing:155,imageUrl:''},
-        {id:'b747-8',model:'747-8',fullModel:'Boeing 747-8',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'巨型客机',category:'jumbo',seats:'410-524',range:'14,320 km',length:'76.3m',wingspan:'68.4m',engines:'GEnx-2B (4发)',cruise:'Mach 0.855',year:2012,mtow:'448吨',fuelPerSeat:'约2.9升/100km',price:'约4.1亿美元',description:'"空中女王"最终版，2023年停产。',gradient:'linear-gradient(135deg,#14b8a6 0%,#0d9488 50%,#0f766e 100%)',svgBodyW:200,svgBodyH:38,svgWing:140,imageUrl:''},
-        {id:'crj900',model:'CRJ900',fullModel:'Bombardier CRJ900',manufacturer:'庞巴迪',manufacturerName:'庞巴迪 Bombardier',type:'支线客机',category:'regional',seats:'76-90',range:'2,950 km',length:'36.4m',wingspan:'24.9m',engines:'CF34-8C5 (后置2发)',cruise:'Mach 0.78',year:2001,mtow:'38.3吨',fuelPerSeat:'约3.0升/100km',price:'约4,500万美元',description:'后置发动机T型尾翼支线客机。',gradient:'linear-gradient(135deg,#8b5cf6 0%,#6d28d9 50%,#4c1d95 100%)',svgBodyW:110,svgBodyH:22,svgWing:62,imageUrl:''},
-        {id:'atr72',model:'ATR 72-600',fullModel:'ATR 72-600',manufacturer:'ATR',manufacturerName:'ATR (法意合资)',type:'支线客机(涡桨)',category:'regional',seats:'70-78',range:'1,500 km',length:'27.2m',wingspan:'27.1m',engines:'PW127M (2台涡桨)',cruise:'500 km/h',year:2011,mtow:'23吨',fuelPerSeat:'约1.5升/100km',price:'约2,600万美元',description:'涡桨支线全球市场冠军。',gradient:'linear-gradient(135deg,#fbbf24 0%,#f59e0b 50%,#d97706 100%)',svgBodyW:95,svgBodyH:22,svgWing:68,imageUrl:''},
-        {id:'b777-9',model:'777-9',fullModel:'Boeing 777-9 (777X)',manufacturer:'波音',manufacturerName:'波音 Boeing',type:'宽体客机',category:'wide-body',seats:'400-425',range:'13,500 km',length:'76.7m',wingspan:'71.8m(折叠64.8m)',engines:'GE9X (105,000磅)',cruise:'Mach 0.84',year:'预计2026',mtow:'351吨',fuelPerSeat:'约2.3升/100km',price:'约4.2亿美元',description:'777X系列，折叠翼尖，GE9X风扇直径3.4米。',gradient:'linear-gradient(135deg,#ec4899 0%,#db2777 50%,#be185d 100%)',svgBodyW:190,svgBodyH:33,svgWing:155,imageUrl:''},
-        {id:'a330neo',model:'A330-900neo',fullModel:'Airbus A330-900neo',manufacturer:'空客',manufacturerName:'空客 Airbus',type:'宽体客机',category:'wide-body',seats:'260-300',range:'13,300 km',length:'63.7m',wingspan:'64.0m',engines:'Trent 7000',cruise:'Mach 0.82',year:2018,mtow:'251吨',fuelPerSeat:'约2.6升/100km',price:'约2.6亿美元',description:'A330最新型号，全新发动机和翼尖小翼。',gradient:'linear-gradient(135deg,#0ea5e9 0%,#0284c7 50%,#0369a1 100%)',svgBodyW:172,svgBodyH:30,svgWing:130,imageUrl:''},
+        {
+          id: 'ana-b787-8',
+          model: '787-8',
+          fullModel: '全日空航空 波音787-8',
+          operator: '全日空 (ANA)',
+          manufacturer: '波音',
+          manufacturerName: '波音 Boeing',
+          type: '宽体客机',
+          category: 'wide-body',
+          seats: '240-335',
+          range: '13,620 km',
+          length: '56.7m',
+          wingspan: '60.1m',
+          engines: 'GEnx / Trent 1000',
+          cruise: 'Mach 0.85',
+          year: 2011,
+          mtow: '228吨',
+          description: '全日空(ANA)是波音787梦想客机的全球启动用户。这架787-8采用了全日空经典的蓝色涂装，是日本航空业创新的象征。',
+          gradient: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)',
+          imageUrl: 'https://i.postimg.cc/y63s2XT2/quan-ri-kong-hang-kong-bo-yin787-8.jpg'
+        },
+        {
+          id: 'turkish-b777-300er',
+          model: '777-300ER',
+          fullModel: '土耳其航空 波音777-300ER',
+          operator: '土耳其航空 (Turkish Airlines)',
+          manufacturer: '波音',
+          manufacturerName: '波音 Boeing',
+          type: '宽体客机',
+          category: 'wide-body',
+          seats: '349-400',
+          range: '13,650 km',
+          length: '73.9m',
+          wingspan: '64.8m',
+          engines: 'GE90-115B',
+          cruise: 'Mach 0.84',
+          year: 2004,
+          mtow: '351吨',
+          description: '土耳其航空是全球飞往最多国家的航空公司。这架777-300ER采用经典的"郁金香"涂装，是土航远程机队的主力机型。',
+          gradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%)',
+          imageUrl: 'https://i.postimg.cc/sxWzSsXT/tu-er-qi-hang-kong-bo-yin777-300ER.jpg'
+        },
+        {
+          id: 'trump-b757',
+          model: '757-200',
+          fullModel: '特朗普专座 波音757',
+          operator: '私人专机 (特朗普)',
+          manufacturer: '波音',
+          manufacturerName: '波音 Boeing',
+          type: '窄体客机(VIP)',
+          category: 'narrow-body',
+          seats: '43 (VIP布局)',
+          range: '7,200 km',
+          length: '47.3m',
+          wingspan: '38.0m',
+          engines: 'RB211-535',
+          cruise: 'Mach 0.80',
+          year: 1991,
+          mtow: '116吨',
+          description: '这架波音757-200是特朗普的私人专机，绰号"Trump Force One"。机身涂装有醒目的特朗普家族标志，内部为豪华VIP配置。',
+          gradient: 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)',
+          imageUrl: 'https://i.postimg.cc/jqntBQhp/te-lang-pu-zhuan-zuo-bo-yin757.jpg'
+        },
+        {
+          id: 'emirates-a380',
+          model: 'A380-800',
+          fullModel: '阿联酋航空 A380-800',
+          operator: '阿联酋航空 (Emirates)',
+          manufacturer: '空客',
+          manufacturerName: '空客 Airbus',
+          type: '巨型客机',
+          category: 'jumbo',
+          seats: '484-615',
+          range: '15,000 km',
+          length: '72.7m',
+          wingspan: '79.8m',
+          engines: 'GP7200 (4发)',
+          cruise: 'Mach 0.85',
+          year: 2008,
+          mtow: '575吨',
+          description: '阿联酋航空是全球最大的A380运营商，曾拥有超过120架A380。这架飞机采用经典的阿联酋航空涂装，是迪拜的空中名片。',
+          gradient: 'linear-gradient(135deg, #dc2626 0%, #16a34a 50%, #ffffff 100%)',
+          imageUrl: 'https://i.postimg.cc/WzZVrT3S/a-lian-qiu-hang-kong-A380-800.jpg'
+        },
+        {
+          id: 'sf-b757',
+          model: '757-200F',
+          fullModel: '顺丰航空 波音757货机',
+          operator: '顺丰航空 (SF Airlines)',
+          manufacturer: '波音',
+          manufacturerName: '波音 Boeing',
+          type: '窄体货机',
+          category: 'narrow-body',
+          seats: '货机 (业载约30吨)',
+          range: '5,500 km',
+          length: '47.3m',
+          wingspan: '38.0m',
+          engines: 'RB211-535',
+          cruise: 'Mach 0.80',
+          year: 1990,
+          mtow: '116吨',
+          description: '顺丰航空是中国最大的货运航空公司，拥有庞大的波音757货机机队。这架757-200F采用顺丰标志性的黑红涂装，日夜穿梭于中国夜空。',
+          gradient: 'linear-gradient(135deg, #1a1a1a 0%, #dc2626 50%, #333333 100%)',
+          imageUrl: 'https://i.postimg.cc/VvtwMm6R/shun-feng-hang-kong-bo-yin757.jpg'
+        },
+        {
+          id: 'sf-b767',
+          model: '767-300F',
+          fullModel: '顺丰航空 波音767货机',
+          operator: '顺丰航空 (SF Airlines)',
+          manufacturer: '波音',
+          manufacturerName: '波音 Boeing',
+          type: '宽体货机',
+          category: 'wide-body',
+          seats: '货机 (业载约60吨)',
+          range: '6,000 km',
+          length: '54.9m',
+          wingspan: '47.6m',
+          engines: 'CF6-80C2',
+          cruise: 'Mach 0.80',
+          year: 1995,
+          mtow: '187吨',
+          description: '顺丰航空的波音767-300F是其中远程货运的主力机型。相比757货机，767拥有更大的货舱容积和业载能力。',
+          gradient: 'linear-gradient(135deg, #1a1a1a 0%, #dc2626 40%, #4a4a4a 100%)',
+          imageUrl: 'https://i.postimg.cc/cC3WY0Hh/shun-feng-hang-kong-bo-yin767.jpg'
+        },
+        {
+          id: 'sia-a350-900',
+          model: 'A350-900',
+          fullModel: '新加坡航空 A350-900',
+          operator: '新加坡航空 (Singapore Airlines)',
+          manufacturer: '空客',
+          manufacturerName: '空客 Airbus',
+          type: '宽体客机',
+          category: 'wide-body',
+          seats: '253-303',
+          range: '15,000 km',
+          length: '66.8m',
+          wingspan: '64.8m',
+          engines: 'Trent XWB',
+          cruise: 'Mach 0.85',
+          year: 2016,
+          mtow: '280吨',
+          description: '新加坡航空是全球评价最高的航空公司之一。这架A350-900采用新航经典的蓝金涂装，执飞新加坡至全球各大洲的远程航线。',
+          gradient: 'linear-gradient(135deg, #1e40af 0%, #f59e0b 50%, #1e40af 100%)',
+          imageUrl: 'https://i.postimg.cc/FRdq7pC4/xin-jia-po-hang-kong-A350-900.jpg'
+        },
+        {
+          id: 'lufthansa-a340-600',
+          model: 'A340-600',
+          fullModel: '汉莎航空 A340-600',
+          operator: '汉莎航空 (Lufthansa)',
+          manufacturer: '空客',
+          manufacturerName: '空客 Airbus',
+          type: '宽体客机',
+          category: 'wide-body',
+          seats: '297-380',
+          range: '14,360 km',
+          length: '75.3m',
+          wingspan: '63.5m',
+          engines: 'Trent 500 (4发)',
+          cruise: 'Mach 0.83',
+          year: 2001,
+          mtow: '380吨',
+          description: '汉莎航空是空客A340-600的重要运营商。这款四发远程客机曾是世界上最长的单层客机，汉莎的白色涂装配上标志性的黄鹤logo格外优雅。',
+          gradient: 'linear-gradient(135deg, #fbbf24 0%, #eab308 50%, #ca8a04 100%)',
+          imageUrl: 'https://i.postimg.cc/Qt9PHmYL/han-sha-hang-kong-A340-600.jpg'
+        }
       ];
 
       const manufacturersDB = [
-        {name:'波音 Boeing',country:'美国',founded:1916,models:'737/747/767/777/787',note:'全球两大干线制造商之一'},
+        {name:'波音 Boeing',country:'美国',founded:1916,models:'737/747/757/767/777/787',note:'全球两大干线制造商之一'},
         {name:'空客 Airbus',country:'欧洲',founded:1970,models:'A220/A320/A330/A340/A350/A380',note:'近年交付量领先'},
         {name:'中国商飞 COMAC',country:'中国',founded:2008,models:'C909/C919/C929',note:'中国民用大飞机主力'},
         {name:'巴西航空 Embraer',country:'巴西',founded:1969,models:'E170/E175/E190/E195/E2',note:'支线客机全球领导者'},
@@ -754,23 +906,8 @@
 
       const airlineRankings=[{rank:1,name:'美国航空',country:'美国',fleet:1450},{rank:2,name:'达美航空',country:'美国',fleet:1350},{rank:3,name:'美联航',country:'美国',fleet:1320},{rank:4,name:'中国南方航空',country:'中国',fleet:900},{rank:5,name:'瑞安航空',country:'爱尔兰',fleet:750}];
       const deliveryRankings=[{model:'波音737全系列',deliveries:'11,000+',status:'持续生产中'},{model:'空客A320全系列',deliveries:'10,500+',status:'持续生产中'},{model:'波音777全系列',deliveries:'1,700+',status:'持续生产中'},{model:'巴航E-喷气系列',deliveries:'1,700+',status:'持续生产中'},{model:'空客A330全系列',deliveries:'1,600+',status:'持续生产中'}];
-      const spottingFeatures=[{model:'波音737',tip:'机身矮壮，发动机底部"压扁"；MAX有分叉翼尖小翼。'},{model:'空客A320',tip:'机身圆直；鲨鳍小翼；驾驶舱侧窗下沿平直。'},{model:'空客A340',tip:'四台发动机+单层客舱=几乎专属特征；修长机身。'},{model:'波音747',tip:'上层"驼峰"客舱，4发。-8上层更长。'},{model:'波音777',tip:'主起落架每侧6轮；巨大GE90发动机。'},{model:'波音787',tip:'锯齿发动机后缘+超大舷窗。'},{model:'空客A350',tip:'"浣熊眼"驾驶舱黑框；弯曲机翼。'},{model:'空客A380',tip:'全双层客舱+4发，翼展近80米。'}];
-      const timelineEvents=[{year:'1935',text:'道格拉斯DC-3首飞。'},{year:'1958',text:'波音707投入运营。'},{year:'1970',text:'波音747"空中女王"首飞。'},{year:'1988',text:'空客A320首飞，电传操纵。'},{year:'2001',text:'空客A340-600首飞，最长单层客机。'},{year:'2007',text:'空客A380商业首航。'},{year:'2015',text:'空客A350投入服务。'},{year:'2023',text:'C919商业运营。'}];
-
-      // SVG生成函数
-      function createPlaneSVG(data) {
-        const bw=data.svgBodyW,bh=data.svgBodyH,ws=data.svgWing,totalW=Math.max(bw+40,ws+20),totalH=Math.max(bh+70,100);
-        return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">
-          <ellipse cx="${totalW/2}" cy="${totalH/2+10}" rx="${bw/2}" ry="${bh/2}" fill="white" stroke="#e2e8f0" stroke-width="1.5" opacity="0.95"/>
-          <ellipse cx="${totalW/2+bw/2-6}" cy="${totalH/2+10}" rx="12" ry="${bh/2-2}" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2" opacity="0.9"/>
-          <polygon points="${totalW/2-ws/2},${totalH/2+10-bh/2} ${totalW/2+ws/2},${totalH/2+10-bh/2} ${totalW/2+ws/2+8},${totalH/2+10-bh/2-4} ${totalW/2-ws/2-8},${totalH/2+10-bh/2-4}" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
-          <polygon points="${totalW/2-ws/2+6},${totalH/2+10+bh/2} ${totalW/2+ws/2-6},${totalH/2+10+bh/2} ${totalW/2+ws/2},${totalH/2+10+bh/2+4} ${totalW/2-ws/2},${totalH/2+10+bh/2+4}" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" opacity="0.7"/>
-          <polygon points="${totalW/2-bw/2+10},${totalH/2+10-bh/2} ${totalW/2-bw/2+4},${totalH/2+10-bh/2-25} ${totalW/2-bw/2+20},${totalH/2+10-bh/2-18}" fill="white" stroke="#e2e8f0" stroke-width="1.2"/>
-          <rect x="${totalW/2-bw/3-6}" y="${totalH/2+10+bh/2-3}" width="14" height="10" rx="4" fill="#94a3b8" opacity="0.7"/>
-          <rect x="${totalW/2+bw/3-8}" y="${totalH/2+10+bh/2-3}" width="14" height="10" rx="4" fill="#94a3b8" opacity="0.7"/>
-          ${Array.from({length:Math.floor(bw/16)},(_,i)=>`<circle cx="${totalW/2-bw/4+i*(bw/(Math.floor(bw/16)+1))+bw/(Math.floor(bw/16)+1)*0.6}" cy="${totalH/2+10-bh/4}" r="2.5" fill="#3b82f6" opacity="0.7"/>`).join('')}
-        </svg>`;
-      }
+      const spottingFeatures=[{model:'波音787',tip:'锯齿发动机后缘+超大舷窗；机翼大幅弯曲上翘。全日空是启动用户。'},{model:'波音777',tip:'主起落架每侧6轮；巨大GE90发动机。土耳其航空远程主力。'},{model:'波音757',tip:'起落架特别高像"踩高跷"；细长机身"飞行铅笔"。顺丰货机/特朗普专机。'},{model:'空客A380',tip:'全双层客舱+4发；翼展近80米。阿联酋航空是全球最大运营商。'},{model:'波音767',tip:'驾驶舱最后一块侧窗独特倒角；主起落架4轮。顺丰货运主力。'},{model:'空客A350',tip:'"浣熊眼"驾驶舱黑框；弯曲机翼。新加坡航空远程精品机型。'},{model:'空客A340',tip:'四台发动机+单层客舱=几乎专属特征；修长机身。汉莎航空经典机型。'}];
+      const timelineEvents=[{year:'1990',text:'波音757货机开始服役，顺丰航空后来成为中国最大757货机运营商。'},{year:'2001',text:'空客A340-600首飞，成为世界上最长的单层客机。'},{year:'2008',text:'阿联酋航空接收首架A380，成为全球最大A380运营商。'},{year:'2011',text:'全日空作为启动用户，接收全球首架波音787梦想客机。'},{year:'2016',text:'新加坡航空接收首架空客A350-900，开启新一代远程机队。'}];
 
       // 状态管理
       let currentTab='aircraft';
@@ -786,26 +923,23 @@
 
       // 渲染飞机卡片
       function renderAircraft(query){
-        const filtered=filterItems(aircraftDB,query,['model','fullModel','manufacturer','manufacturerName','type','description','engines']);
+        const filtered=filterItems(aircraftDB,query,['model','fullModel','operator','manufacturer','manufacturerName','type','description','engines']);
         if(!filtered.length)return '<p style="text-align:center;padding:2rem;">🔍 未找到匹配机型</p>';
         return `<div class="grid">${filtered.map(a=>`
           <div class="aircraft-card" data-id="${a.id}" onclick="openDetail('${a.id}')">
             <div class="card-image-area"><div class="card-gradient-bg" style="background:${a.gradient};"></div>
-              ${a.imageUrl ? `<img src="${a.imageUrl}" alt="${a.model}" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1;">` : `<div class="card-svg-plane">${createPlaneSVG(a)}</div>`}
+              <img src="${a.imageUrl}" alt="${a.model}" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
               <div class="card-spotted-badge ${spottedSet.has(a.id)?'show':''}">✅ 已观察</div></div>
             <div class="card-body">
-              <div class="card-manufacturer">${highlight(a.manufacturerName,query)}</div>
+              <div class="card-manufacturer">${highlight(a.operator,query)}</div>
               <div class="card-model">${highlight(a.fullModel,query)}</div>
               <span class="card-type-badge">${a.type}</span>
-              <div class="card-specs-row"><span>🪑 ${a.seats}座</span><span>🛫 ${a.range}</span><span>📏 ${a.length}</span></div>
+              <div class="card-specs-row"><span>🪑 ${a.seats}</span><span>🛫 ${a.range}</span><span>📏 ${a.length}</span></div>
               <div class="card-footer">
                 <button class="btn-spot ${spottedSet.has(a.id)?'spotted':''}" onclick="event.stopPropagation();toggleSpotted('${a.id}')">${spottedSet.has(a.id)?'✅ 已观察':'👁️ 标记观察'}</button>
                 <button class="btn-detail" onclick="event.stopPropagation();openDetail('${a.id}')">📋 详细规格</button>
               </div></div></div>`).join('')}</div>`;
       }
-
-      function renderCompare(){return `<div class="section-title">📊 窄体客机参数对比</div><div class="table-wrapper"><table><thead><tr><th>参数</th><th>737 MAX 8</th><th>A320neo</th><th>A321neo</th><th>C919</th><th>E195-E2</th></tr></thead><tbody><tr><td>座位</td><td>162-178</td><td>160-180</td><td>200-220</td><td>158-168</td><td>120-146</td></tr><tr><td>航程</td><td>6,570km</td><td>6,300km</td><td>7,400km</td><td>5,555km</td><td>4,800km</td></tr><tr><td>长度</td><td>39.5m</td><td>37.6m</td><td>44.5m</td><td>38.9m</td><td>41.5m</td></tr><tr><td>目录价格</td><td>1.35亿$</td><td>1.25亿$</td><td>1.45亿$</td><td>0.99亿$</td><td>0.65亿$</td></tr></tbody></table></div>
-        <div class="section-title" style="margin-top:1.5rem;">📊 宽体客机参数对比</div><div class="table-wrapper"><table><thead><tr><th>参数</th><th>787-9</th><th>A350-900</th><th>A340-600</th><th>777-300ER</th><th>777-9</th></tr></thead><tbody><tr><td>座位</td><td>290</td><td>315</td><td>320-370</td><td>368</td><td>400-425</td></tr><tr><td>航程</td><td>14,140km</td><td>15,000km</td><td>14,360km</td><td>13,650km</td><td>13,500km</td></tr><tr><td>长度</td><td>62.8m</td><td>66.8m</td><td>75.3m</td><td>73.9m</td><td>76.7m</td></tr><tr><td>发动机</td><td>双发</td><td>双发</td><td>四发</td><td>双发</td><td>双发</td></tr></tbody></table></div>`;}
 
       function renderManufacturers(query){const f=filterItems(manufacturersDB,query,['name','country','models','note']);return `<div class="table-wrapper"><table><thead><tr><th>制造商</th><th>国家</th><th>成立</th><th>代表机型</th><th>备注</th></tr></thead><tbody>${f.map(m=>`<tr><td>${highlight(m.name,query)}</td><td>${m.country}</td><td>${m.founded}</td><td>${highlight(m.models,query)}</td><td>${highlight(m.note,query)}</td></tr>`).join('')}</tbody></table></div>`;}
 
@@ -817,32 +951,31 @@
 
       function renderTimeline(){return timelineEvents.map(e=>`<div class="timeline-item"><strong style="color:var(--accent);font-size:1.1rem;">${e.year}</strong><p>${e.text}</p></div>`).join('');}
 
-      function renderContent(){const q=searchInput.value.trim();let h='';switch(currentTab){case'aircraft':h=renderAircraft(q);break;case'compare':h=renderCompare();break;case'manufacturers':h=renderManufacturers(q);break;case'rankings':h=renderRankings();break;case'spotting':h=renderSpotting(q);break;case'timeline':h=renderTimeline();break;default:h=renderAircraft(q);}contentArea.innerHTML=h;updateStats();}
+      function renderContent(){const q=searchInput.value.trim();let h='';switch(currentTab){case'aircraft':h=renderAircraft(q);break;case'manufacturers':h=renderManufacturers(q);break;case'rankings':h=renderRankings();break;case'spotting':h=renderSpotting(q);break;case'timeline':h=renderTimeline();break;default:h=renderAircraft(q);}contentArea.innerHTML=h;updateStats();}
 
       function updateStats(){document.getElementById('stat-total').textContent=aircraftDB.length;const um=new Set(aircraftDB.map(a=>a.manufacturer));document.getElementById('stat-manufacturers').textContent=um.size;document.getElementById('stat-spotted').textContent=spottedSet.size;document.getElementById('spotted-count-nav').textContent=spottedSet.size>0?`(${spottedSet.size})`:'(0)';}
 
       // 弹窗
       window.openDetail=function(id){const d=aircraftDB.find(a=>a.id===id);if(!d)return;modalTitle.textContent=d.fullModel;modalBody.innerHTML=`
         <div style="background:${d.gradient};border-radius:14px;padding:30px;text-align:center;margin-bottom:18px;">
-          ${d.imageUrl ? `<img src="${d.imageUrl}" alt="${d.model}" style="max-width:100%;max-height:250px;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.25));">` : `<div style="filter:drop-shadow(0 8px 20px rgba(0,0,0,0.25));">${createPlaneSVG(d)}</div>`}
+          <img src="${d.imageUrl}" alt="${d.model}" style="max-width:100%;max-height:250px;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.25));" onerror="this.style.display='none';">
         </div>
         <table style="width:100%;border-collapse:collapse;margin:16px 0;"><tbody>
+        <tr><td style="font-weight:600;padding:8px;">✈️ 运营航司</td><td>${d.operator}</td></tr>
         <tr><td style="font-weight:600;padding:8px;">🏭 制造商</td><td>${d.manufacturerName}</td></tr>
         <tr><td style="font-weight:600;padding:8px;">📂 类型</td><td>${d.type}</td></tr>
-        <tr><td style="font-weight:600;padding:8px;">📅 首飞</td><td>${d.year}年</td></tr>
-        <tr><td style="font-weight:600;padding:8px;">🪑 座位</td><td>${d.seats}</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">📅 首飞/交付</td><td>${d.year}年</td></tr>
+        <tr><td style="font-weight:600;padding:8px;">🪑 座位/业载</td><td>${d.seats}</td></tr>
         <tr><td style="font-weight:600;padding:8px;">🛫 航程</td><td>${d.range}</td></tr>
         <tr><td style="font-weight:600;padding:8px;">📏 长度/翼展</td><td>${d.length} / ${d.wingspan}</td></tr>
-        <tr><td style="font-weight:600;padding:8px;">💨 巡航速度</td><td>${d.cruise}</td></tr>
         <tr><td style="font-weight:600;padding:8px;">⚙️ 发动机</td><td>${d.engines}</td></tr>
-        <tr><td style="font-weight:600;padding:8px;">⚖️ 最大起飞重量</td><td>${d.mtow}</td></tr>
-        <tr><td style="font-weight:600;padding:8px;">💰 目录价</td><td>${d.price}</td></tr></tbody></table>
+        <tr><td style="font-weight:600;padding:8px;">⚖️ 最大起飞重量</td><td>${d.mtow}</td></tr></tbody></table>
         <p style="color:var(--text-secondary);margin-top:12px;">📝 ${d.description}</p>
         <div style="margin-top:16px;text-align:center;"><button class="btn-spot ${spottedSet.has(d.id)?'spotted':''}" onclick="toggleSpotted('${d.id}');closeModal();">${spottedSet.has(d.id)?'✅ 已观察':'👁️ 标记为已观察'}</button></div>`;modalOverlay.style.display='flex';document.body.style.overflow='hidden';};
       window.closeModal=function(){modalOverlay.style.display='none';document.body.style.overflow='';renderContent();};
       window.closeModalOutside=function(e){if(e.target===modalOverlay)closeModal();};
       window.toggleSpotted=function(id){spottedSet.has(id)?spottedSet.delete(id):spottedSet.add(id);localStorage.setItem('spottedAircraft',JSON.stringify([...spottedSet]));renderContent();};
-      window.showSpottedList=function(){if(spottedSet.size===0){alert('观察清单为空，请先标记机型！✈️');return;}const sd=aircraftDB.filter(a=>spottedSet.has(a.id));contentArea.innerHTML=`<div class="grid">${sd.map(a=>`<div class="aircraft-card" onclick="openDetail('${a.id}')"><div class="card-image-area"><div class="card-gradient-bg" style="background:${a.gradient};"></div>${a.imageUrl?`<img src="${a.imageUrl}" alt="${a.model}" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1;">`:`<div class="card-svg-plane">${createPlaneSVG(a)}</div>`}<div class="card-spotted-badge show">✅ 已观察</div></div><div class="card-body"><div class="card-manufacturer">${a.manufacturerName}</div><div class="card-model">${a.fullModel}</div><span class="card-type-badge">${a.type}</span></div></div>`).join('')}</div>`;updateStats();};
+      window.showSpottedList=function(){if(spottedSet.size===0){alert('观察清单为空，请先标记机型！✈️');return;}const sd=aircraftDB.filter(a=>spottedSet.has(a.id));contentArea.innerHTML=`<div class="grid">${sd.map(a=>`<div class="aircraft-card" onclick="openDetail('${a.id}')"><div class="card-image-area"><div class="card-gradient-bg" style="background:${a.gradient};"></div><img src="${a.imageUrl}" alt="${a.model}" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:1;"><div class="card-spotted-badge show">✅ 已观察</div></div><div class="card-body"><div class="card-manufacturer">${a.operator}</div><div class="card-model">${a.fullModel}</div><span class="card-type-badge">${a.type}</span></div></div>`).join('')}</div>`;updateStats();};
 
       document.getElementById('tabContainer').addEventListener('click',e=>{if(e.target.classList.contains('tab')){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');currentTab=e.target.dataset.tab;searchInput.value='';renderContent();contentArea.scrollIntoView({behavior:'smooth',block:'start'});}});
       searchInput.addEventListener('input',renderContent);
